@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DNA Fitness" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>Saurabh – 4 Week DNA Fitness Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'] },
+          colors: {
+            ink: '#0f172a',
+            ink2: '#1e293b',
+            muted: '#64748b',
+            line: '#e2e8f0',
+            navy: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a', 950: '#0f172a' },
+            teal: { 500: '#14b8a6', 600: '#0f766e', 700: '#0d9488' },
+            amber2: { 600: '#b45309', 700: '#92400e' },
+          },
+          boxShadow: {
+            card: '0 4px 24px -6px rgba(15,23,42,.10), 0 2px 6px -2px rgba(15,23,42,.06)',
+            timer: '0 12px 40px -8px rgba(15,23,42,.35)',
+            fab: '0 10px 30px -10px rgba(37,99,235,.55)',
+          },
+          backgroundImage: {
+            hero: 'linear-gradient(145deg, #0b1220 0%, #1e3a8a 50%, #2563eb 100%)',
+            launch: 'linear-gradient(145deg, #0b1220 0%, #172554 55%, #1e3a8a 100%)',
+            overlay: 'linear-gradient(180deg, #020617 0%, #0f172a 50%, #020617 100%)',
+            glass: 'linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.82) 100%)',
+          },
+          animation: {
+            'fade-in': 'fadeIn .35s ease-out both',
+            'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
+            'shake': 'shake .25s ease-in-out 2',
+            'pop': 'pop .25s ease-out both',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: 0, transform: 'translateY(6px)' }, '100%': { opacity: 1, transform: 'none' } },
+            pulseSoft: { '0%,100%': { transform: 'scale(1)' }, '50%': { transform: 'scale(1.015)' } },
+            shake: { '0%,100%': { transform: 'translateX(0)' }, '25%': { transform: 'translateX(-3px)' }, '75%': { transform: 'translateX(3px)' } },
+            pop: { '0%': { transform: 'scale(.92)', opacity: 0 }, '100%': { transform: 'scale(1)', opacity: 1 } },
+          },
+          borderRadius: {
+            xl2: '1.25rem',
+            xl3: '1.5rem',
+          },
+          letterSpacing: {
+            tight2: '-.03em',
+          },
+          fontSize: {
+            '7.5xl': ['5.5rem', { lineHeight: '1', fontWeight: '900' }],
+          },
+        },
+      },
+    };
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+  .content-auto { content-visibility: auto; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
+  .tap-none { -webkit-tap-highlight-color: transparent; }
+  .num-tab { font-variant-numeric: tabular-nums; }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  .min-h-dvh { min-height: 100dvh; min-height: 100vh; }
+  .h-dvh { height: 100dvh; height: 100vh; }
+  .touch-y { touch-action: pan-y; }
+  .backdrop-blur-xl { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+  .backdrop-blur-md2 { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .grid-tap > * { -webkit-tap-highlight-color: transparent; }
+}
+/* Structural rules for screens and overlays (Tailwind hybrid toggles) */
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn .35s ease-out both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+
+<body class="font-sans antialiased bg-slate-50 text-slate-900 leading-[1.45] min-h-dvh tap-none overscroll-y-contain">
+
+  <div class="relative max-w-[960px] mx-auto px-3.5 pb-28">
+    <header
+      class="relative -mx-3.5 mb-3.5 rounded-b-[28px] overflow-hidden bg-hero text-white shadow-card animate-fade-in">
+      <div
+        class="absolute inset-0 opacity-[.18] bg-[radial-gradient(ellipse_at_top_right,rgba(96,165,250,.8),transparent_55%)] pointer-events-none">
+      </div>
+      <div class="absolute -bottom-14 -right-10 w-52 h-52 rounded-full bg-navy-500/30 blur-3xl pointer-events-none">
+      </div>
+      <div class="relative px-5 pt-[calc(22px+env(safe-area-inset-top))] pb-6">
+        <h1 class="text-[1.7rem] sm:text-[1.95rem] font-black leading-[1.08] tracking-tight2">4-Week DNA-Informed<br
+            class="sm:hidden" /> Fitness + Diet Plan</h1>
+        <p class="mt-1.5 text-navy-100 text-[.96rem]">20 min · 5 days/week · fat loss + VO₂ max + strength</p>
+        <div class="flex flex-wrap gap-1.5 mt-3.5">
+          <span
+            class="text-[.78rem] font-semibold px-3 py-1.5 rounded-full bg-white/12 border border-white/10 backdrop-blur-md2">67
+            kg → 62 kg</span>
+          <span
+            class="text-[.78rem] font-semibold px-3 py-1.5 rounded-full bg-white/12 border border-white/10 backdrop-blur-md2">Age
+            45</span>
+          <span
+            class="text-[.78rem] font-semibold px-3 py-1.5 rounded-full bg-white/12 border border-white/10 backdrop-blur-md2">Intermediate</span>
+          <span
+            class="text-[.78rem] font-semibold px-3 py-1.5 rounded-full bg-white/12 border border-white/10 backdrop-blur-md2">11:00–18:00
+            eating</span>
+          <span
+            class="text-[.78rem] font-semibold px-3 py-1.5 rounded-full bg-white/12 border border-white/10 backdrop-blur-md2">Tue
+            vegetarian</span>
+        </div>
+      </div>
+    </header>
+
+    <nav class="sticky top-0 z-30 -mx-3.5 px-3.5 flex gap-1.5 overflow-x-auto scrollbar-hide
+              bg-gradient-to-b from-slate-50 via-slate-50/95 to-slate-50/0
+              backdrop-blur-xl py-1.5 pb-3 touch-y">
+      <button
+        class="navbtn whitespace-nowrap border border-line bg-white rounded-full px-3.5 py-2.5 text-[.88rem] font-semibold text-slate-700 transition active"
+        data-screen="today">Today</button>
+      <button
+        class="navbtn whitespace-nowrap border border-line bg-white rounded-full px-3.5 py-2.5 text-[.88rem] font-semibold text-slate-700 transition"
+        data-screen="plan">4 Weeks</button>
+      <button
+        class="navbtn whitespace-nowrap border border-line bg-white rounded-full px-3.5 py-2.5 text-[.88rem] font-semibold text-slate-700 transition"
+        data-screen="food">Food</button>
+      <button
+        class="navbtn whitespace-nowrap border border-line bg-white rounded-full px-3.5 py-2.5 text-[.88rem] font-semibold text-slate-700 transition"
+        data-screen="progress">Progress</button>
+      <button
+        class="navbtn whitespace-nowrap border border-line bg-white rounded-full px-3.5 py-2.5 text-[.88rem] font-semibold text-slate-700 transition"
+        data-screen="dna">DNA Logic</button>
+      <button
+        class="navbtn whitespace-nowrap border border-line bg-white rounded-full px-3.5 py-2.5 text-[.88rem] font-semibold text-slate-700 transition"
+        data-screen="supplements">Supplements</button>
+    </nav>
+
+    <section id="today" class="screen active animate-fade-in">
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-1 shadow-card">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <span id="todayWeek"
+              class="inline-block bg-navy-50 text-navy-700 rounded-full px-3 py-1 text-[.75rem] font-extrabold">Week
+              1</span>
+            <h2 id="todayTitle" class="mt-2 text-[1.2rem] font-extrabold text-slate-900 leading-snug"></h2>
+            <div id="todayFocus" class="text-slate-500 text-[.88rem] mt-0.5"></div>
+          </div>
+          <div class="field flex flex-col gap-1.5">
+            <label class="text-[.82rem] font-semibold text-slate-600">Plan start date (Monday)</label>
+            <input type="date" id="startDate"
+              class="w-full border border-slate-300 rounded-[11px] px-3 py-2.5 bg-white text-slate-900 text-[.95rem]" />
+          </div>
+        </div>
+      </div>
+
+      <div id="guideLaunch"
+        class="bg-launch rounded-[22px] p-5 mt-2.5 text-white overflow-hidden relative shadow-card animate-fade-in">
+      </div>
+
+      <div class="bg-ink text-white rounded-[22px] p-4 mt-2.5 text-center relative shadow-timer animate-fade-in">
+        <div
+          class="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top,rgba(96,165,250,.35),transparent_60%)] pointer-events-none">
+        </div>
+        <div class="relative sticky top-[56px] z-20">
+          <div id="timerCounter" class="text-[.72rem] uppercase tracking-wider text-slate-300 font-semibold">Ready</div>
+          <div id="timerClock" class="text-[3.2rem] leading-none font-black num-tab tracking-tight2 my-1">20:00</div>
+          <div id="timerPhase" class="text-slate-300 text-[.9rem] min-h-[2.2em] mx-auto">Tap Start to run today's
+            session.</div>
+          <div class="h-[7px] bg-slate-700/80 rounded-full overflow-hidden mx-1 my-2.5">
+            <div id="timerProgress"
+              class="h-full w-0 bg-gradient-to-r from-navy-400 to-sky-400 transition-[width] duration-500"></div>
+          </div>
+          <div class="flex gap-1.5 justify-center flex-wrap">
+            <button id="timerStart"
+              class="border-none rounded-xl px-3.5 py-2.5 font-extrabold text-[.88rem] bg-navy-500 hover:bg-navy-600 active:scale-95 transition">Start</button>
+            <button id="timerPause"
+              class="border-none rounded-xl px-3.5 py-2.5 font-extrabold text-[.88rem] bg-slate-700 hover:bg-slate-600 active:scale-95 transition">Pause</button>
+            <button id="timerSkip"
+              class="border-none rounded-xl px-3.5 py-2.5 font-extrabold text-[.88rem] bg-slate-700 hover:bg-slate-600 active:scale-95 transition">Skip</button>
+            <button id="timerReset"
+              class="border-none rounded-xl px-3.5 py-2.5 font-extrabold text-[.88rem] bg-rose-600 hover:bg-rose-700 active:scale-95 transition">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="todayWorkout" class="bg-white border border-line rounded-xl3 p-4 mt-2.5 shadow-card"></div>
+      <div id="todayMeals" class="bg-white border border-line rounded-xl3 p-4 mt-2.5 shadow-card"></div>
+      <div id="todayLog" class="bg-white border border-line rounded-xl3 p-4 mt-2.5 shadow-card"></div>
+    </section>
+
+    <section id="plan" class="screen animate-fade-in">
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-1 shadow-card">
+        <h2 class="text-[1.2rem] font-extrabold text-slate-900 mb-1">4-week schedule</h2>
+        <p class="text-slate-500 text-[.9rem] mb-3">3 resistance-biased days · 1 VO₂-max day · 1 aerobic/core/mobility
+          day · weekends recovery.</p>
+        <div class="flex gap-1.5 mb-3" id="weekTabs"></div>
+        <div class="grid grid-cols-7 gap-1" id="dayTabs"></div>
+      </div>
+      <div id="planWorkout" class="bg-white border border-line rounded-xl3 p-4 mt-2.5 shadow-card"></div>
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-2.5 shadow-card">
+        <h3 class="font-extrabold text-slate-900 mb-2">Progressive overload</h3>
+        <table class="w-full text-[.84rem] border-collapse">
+          <tr class="text-left">
+            <th class="text-slate-500 font-semibold py-2.5 px-1.5 border-b border-line align-top">Week</th>
+            <th class="text-slate-500 font-semibold py-2.5 px-1.5 border-b border-line align-top">Rule</th>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">1</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Establish loads. Finish strength with ~2–3 reps in
+              reserve (RIR).</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">2</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Add 1–2 reps per set. If at top of range with
+              perfect form, use smallest DB/KB increment.</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">3</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Use slower eccentrics and pauses (mostly 3-1-1-0)
+              to raise tension without heavier equipment.</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">4</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Add ~2–5% load / next safe implement and work at
+              ~1–2 RIR. No ugly reps, no grinding.</td>
+          </tr>
+        </table>
+      </div>
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-2.5 mb-2 shadow-card">
+        <h3 class="font-extrabold text-slate-900 mb-2">Regression / progression library</h3>
+        <div id="exerciseLibrary"></div>
+      </div>
+    </section>
+
+    <section id="food" class="screen animate-fade-in">
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-1 shadow-card">
+        <h2 class="text-[1.2rem] font-extrabold text-slate-900 mb-3">Starting nutrition target</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><span
+              class="text-[.72rem] text-slate-500 font-semibold">Calories</span><b
+              class="block text-[1.15rem] text-slate-900 mt-0.5">1,600–1,700</b><span
+              class="text-[.72rem] text-slate-500">adjust from 14-day trend</span></div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><span
+              class="text-[.72rem] text-slate-500 font-semibold">Protein</span><b
+              class="block text-[1.15rem] text-slate-900 mt-0.5">120–135 g</b><span
+              class="text-[.72rem] text-slate-500">preserve muscle</span></div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><span
+              class="text-[.72rem] text-slate-500 font-semibold">Carbohydrate</span><b
+              class="block text-[1.15rem] text-slate-900 mt-0.5">170–200 g</b><span
+              class="text-[.72rem] text-slate-500">mostly low-GL</span></div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><span
+              class="text-[.72rem] text-slate-500 font-semibold">Fat</span><b
+              class="block text-[1.15rem] text-slate-900 mt-0.5">40–50 g</b><span
+              class="text-[.72rem] text-slate-500">mainly unsaturated</span></div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><span
+              class="text-[.72rem] text-slate-500 font-semibold">Saturated fat</span><b
+              class="block text-[1.15rem] text-slate-900 mt-0.5">&lt;18 g</b><span
+              class="text-[.72rem] text-slate-500">important for report</span></div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><span
+              class="text-[.72rem] text-slate-500 font-semibold">Fibre</span><b
+              class="block text-[1.15rem] text-slate-900 mt-0.5">≥30 g</b><span
+              class="text-[.72rem] text-slate-500">beans + veg + berries</span></div>
+        </div>
+        <div class="mt-3 border-l-4 border-teal-600 bg-teal-50 p-3 rounded-r-xl text-[.88rem]"><b
+            class="text-teal-700">Meal times:</b> 11:00, 14:15 and 17:20. Finish by 18:00. Water + non-caloric herbal
+          tea afterward.</div>
+        <div class="mt-2 border-l-4 border-amber-600 bg-amber-50 p-3 rounded-r-xl text-[.88rem]"><b
+            class="text-amber-700">Important:</b> if 11:00–18:00 worsens sleep, dizziness, hunger control or training
+          performance, widen it rather than forcing a 17-hour fast.</div>
+      </div>
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-2.5 shadow-card">
+        <h2 class="text-[1.2rem] font-extrabold text-slate-900 mb-3">7-day menu</h2>
+        <div class="grid grid-cols-7 gap-1" id="foodDayTabs"></div>
+        <div id="foodDay" class="mt-3"></div>
+      </div>
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-2.5 mb-2 shadow-card">
+        <h3 class="font-extrabold text-slate-900 mb-2">Food rules</h3>
+        <ol class="space-y-2 text-[.92rem] text-slate-700 list-decimal pl-5">
+          <li>Half of lunch/dinner volume from vegetables: capsicum, carrot, radish, spinach, broccoli, cabbage,
+            mushrooms and onions.</li>
+          <li>Prefer lean chicken and low-fat Skyr/yogurt/paneer. Keep cheese/paneer portions controlled because
+            saturated fat can climb quickly.</li>
+          <li>Main carbs: rajma/lentils/chickpeas, besan, oats, kuttu, quinoa, brown rice, berries and whole fruit.
+            Avoid juice and refined sweets as routine foods.</li>
+          <li>Do not add a BCAA supplement. One normal whey serving is enough if daily protein is already on target.
+          </li>
+          <li>Whenever practical, walk 10–20 minutes after the largest meal. This is extra lifestyle movement, not part
+            of the 20-minute workout.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="progress" class="screen animate-fade-in">
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-1 shadow-card">
+        <h2 class="text-[1.2rem] font-extrabold text-slate-900 mb-3">Daily logger</h2>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div class="flex flex-col gap-1.5"><label
+              class="text-[.82rem] font-semibold text-slate-600">Week</label><select id="logWeek"
+              class="w-full border border-slate-300 rounded-[11px] px-3 py-2.5 bg-white text-slate-900 text-[.95rem]"></select>
+          </div>
+          <div class="flex flex-col gap-1.5"><label
+              class="text-[.82rem] font-semibold text-slate-600">Day</label><select id="logDay"
+              class="w-full border border-slate-300 rounded-[11px] px-3 py-2.5 bg-white text-slate-900 text-[.95rem]"></select>
+          </div>
+        </div>
+        <div id="progressForm" class="mt-3"></div>
+      </div>
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-2.5 shadow-card">
+        <h3 class="font-extrabold text-slate-900 mb-2">Weight entries</h3>
+        <div id="weightTable"></div>
+        <p class="text-[.75rem] text-slate-500 mt-3">Judge progress from weekly averages. A practical fat-loss pace is
+          roughly 0.3–0.5 kg/week. If no downward trend for 2 weeks and adherence is genuinely high, reduce food by
+          about 100–150 kcal/day or add walking.</p>
+      </div>
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-2.5 mb-2 shadow-card">
+        <h3 class="font-extrabold text-slate-900 mb-3">Backup</h3>
+        <div class="flex gap-2 flex-wrap">
+          <button id="exportBtn"
+            class="rounded-xl px-3.5 py-2.5 font-extrabold text-[.86rem] bg-white text-slate-700 border border-line active:scale-95 transition">Export
+            log JSON</button>
+          <label
+            class="rounded-xl px-3.5 py-2.5 font-extrabold text-[.86rem] bg-white text-slate-700 border border-line active:scale-95 transition cursor-pointer inline-block"
+            for="importFile">Import log JSON</label>
+          <input id="importFile" type="file" accept="application/json" class="hidden" />
+          <button id="resetData"
+            class="rounded-xl px-3.5 py-2.5 font-extrabold text-[.86rem] bg-rose-600 text-white border border-rose-700 active:scale-95 transition">Reset
+            all logs</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="dna" class="screen animate-fade-in">
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-1 mb-2 shadow-card">
+        <h2 class="text-[1.2rem] font-extrabold text-slate-900 mb-1">How your report changed the plan</h2>
+        <p class="text-slate-500 text-[.9rem] mb-3">Genetics treated as modifiers, not diagnoses. Plan emphasizes
+          repeated, low-risk recommendations in the report.</p>
+        <div class="grid gap-2.5">
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><b class="block text-slate-900 mb-1">Blood sugar /
+              insulin</b><span class="text-[.9rem] text-slate-700">Your report flags impaired insulin secretion risk and
+              poorer insulin sensitivity, and specifically says a low-glycaemic-load diet can benefit you. Hence
+              legumes, vegetables, low-GL carbs, resistance training and aerobic work.</span></div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><b class="block text-slate-900 mb-1">Meal
+              timing</b><span class="text-[.9rem] text-slate-700">The melatonin/glucose section warns against late-night
+              food. Your 11:00–18:00 window fits the "earlier calories" direction, provided it remains
+              sustainable.</span></div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><b class="block text-slate-900 mb-1">Saturated fat
+              + BCAA</b><span class="text-[.9rem] text-slate-700">Report repeatedly warns that high saturated fat + high
+              BCAA intake may worsen insulin function. Hence lean protein, low-fat dairy and no BCAA supplement.</span>
+          </div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><b class="block text-slate-900 mb-1">Strength
+              potential</b><span class="text-[.9rem] text-slate-700">VEGFA section calls you a high responder to
+              traditional resistance training. 3 of 5 training days are resistance-biased.</span></div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><b class="block text-slate-900 mb-1">VO₂
+              max</b><span class="text-[.9rem] text-slate-700">Average VO₂-max responder; report recommends HIIT
+              1–2×/week + steady aerobic work. Tuesday = main intervals; Thu/Fri add aerobic stimulus.</span></div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><b class="block text-slate-900 mb-1">Soft tissue /
+              bone</b><span class="text-[.9rem] text-slate-700">COL5A1 flags slightly higher soft-tissue injury risk;
+              WNT16/VDR sections flag lower BMD tendency. Plan uses progressive loading, controlled eccentrics and
+              weight-bearing work rather than daily maximal impact.</span></div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><b
+              class="block text-slate-900 mb-1">Sleep</b><span class="text-[.9rem] text-slate-700">CLOCK section links
+              fragmented/short sleep with overeating and weight-gain risk. Min target 7 h; preferred 7–9 h.</span></div>
+          <div class="bg-slate-50 border border-line rounded-2xl p-3"><b
+              class="block text-slate-900 mb-1">Caffeine</b><span class="text-[.9rem] text-slate-700">Intermediate
+              caffeine metaboliser with CV-risk flags at higher intake. Staying caffeine-free is a sensible fit for your
+              stated preference.</span></div>
+        </div>
+        <div class="mt-3 border-l-4 border-rose-600 bg-rose-50 p-3 rounded-r-xl text-[.88rem]"><b
+            class="text-rose-700">Safety gate:</b> if your blood pressure is currently uncontrolled, or you get chest
+          pain, faintness, unusual breathlessness or palpitations, get medical clearance before the hard interval
+          sessions. Exhale through the hard part of strength reps and avoid prolonged breath-holding.</div>
+      </div>
+    </section>
+
+    <section id="supplements" class="screen animate-fade-in">
+      <div class="bg-white border border-line rounded-xl3 p-4 mt-1 mb-2 shadow-card">
+        <h2 class="text-[1.2rem] font-extrabold text-slate-900 mb-3">Supplement schedule — keep it simple</h2>
+        <table class="w-full text-[.84rem] border-collapse">
+          <tr class="text-left">
+            <th class="text-slate-500 font-semibold py-2.5 px-1.5 border-b border-line align-top">When</th>
+            <th class="text-slate-500 font-semibold py-2.5 px-1.5 border-b border-line align-top">Supplement</th>
+            <th class="text-slate-500 font-semibold py-2.5 px-1.5 border-b border-line align-top">Rule</th>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-1.5 border-b border-line align-top font-semibold">11:00</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Vitamin D3 + K2</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Use the label dose unless a clinician/lab-guided
+              plan says otherwise. Your report gives multiple vitamin-D ranges; a 25-OH-vitamin-D blood test is more
+              useful than blindly escalating.</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-1.5 border-b border-line align-top font-semibold">With food</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Omega-3 EPA/DHA</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Check actual combined EPA+DHA on the label, not
+              just "fish oil" mg. Discuss with a clinician if taking anticoagulant/antiplatelet medicine.</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-1.5 border-b border-line align-top font-semibold">Morning</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">One B-complex only</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Do not automatically stack B-complex + B12 gummies
+              + multiple focus blends. Chronic high-dose B6 can cause neuropathy.</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-1.5 border-b border-line align-top font-semibold">Before/after training</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Collagen 5–15 g</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Optional. Pair with a vitamin-C food such as
+              berries, capsicum or orange.</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-1.5 border-b border-line align-top font-semibold">Evening</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">One magnesium product</td>
+            <td class="py-2.5 px-1.5 border-b border-line align-top">Do not stack several magnesium products. Count
+              <b>elemental magnesium</b> from the label.
+            </td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-1.5 align-top font-semibold">Only when useful</td>
+            <td class="py-2.5 px-1.5 align-top">Electrolyte</td>
+            <td class="py-2.5 px-1.5 align-top">Prefer low/no sugar and check sodium. Report flags salt-sensitive
+              blood-pressure risk.</td>
+          </tr>
+        </table>
+        <div class="mt-3 border-l-4 border-amber-600 bg-amber-50 p-3 rounded-r-xl text-[.88rem]">I have intentionally
+          not auto-added berberine, chromium, high-dose methylfolate, 5-HTP, L-arginine or similar report suggestions.
+          Those can interact with medicines or be unnecessary without clinical context/labs.</div>
+      </div>
+    </section>
+  </div>
+
+  <div id="guidedOverlay"
+    class="guide-overlay fixed inset-0 z-[100] bg-overlay text-white hidden overflow-auto overscroll-contain touch-y"
+    aria-hidden="true">
+    <div class="min-h-dvh max-w-[720px] mx-auto flex flex-col relative">
+      <div class="px-4 flex items-center justify-between gap-2.5 pt-[calc(14px+env(safe-area-inset-top))] pb-2.5">
+        <button id="guideClose"
+          class="rounded-xl px-3 py-2 text-[.85rem] font-bold bg-white/10 border border-white/10 text-white active:scale-95 transition">✕
+          Exit</button>
+        <div class="text-center flex-1">
+          <div id="guideStepText" class="text-[.7rem] uppercase tracking-wider text-slate-300 font-semibold">Preview
+          </div><b id="guideMiniTitle" class="text-[.9rem]">Workout</b>
+        </div>
+        <button id="guideSound"
+          class="rounded-xl px-3 py-2 text-[.85rem] font-bold bg-white/10 border border-white/10 text-white active:scale-95 transition">🔊
+          On</button>
+      </div>
+      <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden mx-4">
+        <div id="guideProgress"
+          class="h-full bg-gradient-to-r from-navy-400 to-sky-400 w-0 transition-[width] duration-200"></div>
+      </div>
+      <div id="guideCard" class="guide-card flex-1 flex flex-col justify-start pt-5 px-4 pb-28 animate-fade-in"></div>
+      <div
+        class="fixed left-0 right-0 bottom-0 px-3.5 pb-[calc(10px+env(safe-area-inset-bottom))] pt-16 bg-gradient-to-t from-[#020617] via-[#020617cc] to-transparent z-[102]">
+        <div class="max-w-[720px] mx-auto grid grid-cols-[76px_1fr_76px] gap-2">
+          <button id="guidePrev"
+            class="guide-action alt rounded-[14px] py-3.5 px-2.5 font-black text-[1rem] bg-slate-800 text-white border border-slate-700 active:scale-95 transition">←</button>
+          <button id="guideNext"
+            class="guide-action main rounded-[14px] py-3.5 px-2.5 font-black text-[.95rem] bg-navy-500 hover:bg-navy-600 text-white active:scale-95 transition shadow-fab">Start
+            workout</button>
+          <button id="guidePause"
+            class="guide-action alt rounded-[14px] py-3.5 px-2.5 font-black text-[1rem] bg-slate-800 text-white border border-slate-700 active:scale-95 transition">Ⅱ</button>
+        </div>
+        <div class="text-center text-slate-500 text-[.72rem] mt-1.5">Swipe left for next · swipe right for previous
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fixed left-0 right-0 bottom-0 z-40 bg-glass border-t border-line backdrop-blur-xl">
+    <div class="max-w-[960px] mx-auto grid grid-cols-2 gap-2 px-3 py-2.5 pb-safe">
+      <button id="completeToday"
+        class="rounded-xl px-3.5 py-2.5 font-extrabold text-[.88rem] bg-navy-600 text-white active:scale-95 transition shadow-fab">✓
+        Mark today complete</button>
+      <button id="jumpProgress"
+        class="rounded-xl px-3.5 py-2.5 font-extrabold text-[.88rem] bg-white text-slate-700 border border-line active:scale-95 transition">Log
+        measurements</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
